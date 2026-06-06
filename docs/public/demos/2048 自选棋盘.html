@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>自选尺寸2048</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:微软雅黑,sans-serif;}
+body{background:#faf8ef;display:flex;flex-direction:column;align-items:center;padding-top:40px;touch-action:none;}
+h1{font-size:36px;color:#776e65;margin-bottom:25px;}
+.btn-box{display:flex;gap:15px;margin-bottom:30px;}
+.choose-btn{padding:14px 30px;font-size:18px;border:none;border-radius:8px;background:#8f7a66;color:#fff;cursor:pointer;}
+.container{display:none;flex-direction:column;align-items:center;}
+.score{font-size:20px;color:#776e65;margin-bottom:12px;}
+.grid{background:#bbada0;padding:10px;border-radius:10px;display:grid;gap:8px;}
+.cell{background:#cdc1b4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:bold;}
+.back{position:absolute;top:15px;left:15px;padding:7px 12px;background:#8f7a66;color:#fff;border:none;border-radius:5px;display:none;}
+</style>
+</head>
+<body>
+<h1>2048 自选棋盘</h1>
+<div class="btn-box" id="selectBox">
+    <button class="choose-btn" onclick="startGame(3)">3×3 棋盘</button>
+    <button class="choose-btn" onclick="startGame(6)">6×6 棋盘</button>
+</div>
+<button class="back" id="backBtn" onclick="backSelect()">返回</button>
+<div class="container" id="gameBox">
+    <div class="score">分数：<span id="score">0</span></div>
+    <div class="grid" id="gridBox"></div>
+</div>
+
+<script>
+let size = 3, grid = [], score = 0;
+let startX = 0, startY = 0, endX = 0, endY = 0;
+const c3 = 85, c6 = 50, f3 = 30, f6 = 16;
+const scoreSpan = document.getElementById("score");
+const colorMap = {
+2:["#eee4da","#776e65"],4:["#ede0c8","#776e65"],8:["#f2b179","#fff"],
+16:["#f59563","#fff"],32:["#f67c5f","#fff"],64:["#f65e3b","#fff"],
+128:["#edcf72","#fff"],256:["#edcc61","#fff"],512:["#edc850","#fff"],
+1024:["#edc53f","#fff"],2048:["#edc22e","#fff"]
+};
+
+function startGame(s){
+    size = s;
+    score = 0;
+    scoreSpan.innerText = 0;
+    selectBox.style.display = "none";
+    gameBox.style.display = "flex";
+    backBtn.style.display = "block";
+    initGrid();
+}
+function backSelect(){
+    selectBox.style.display = "flex";
+    gameBox.style.display = "none";
+    backBtn.style.display = "none";
+}
+function initGrid(){
+    grid = Array.from({length:size},()=>Array(size).fill(0));
+    let g = gridBox;
+    g.innerHTML = "";
+    let w = size===3 ? c3 : c6;
+    let fs = size===3 ? f3 : f6;
+    g.style.gridTemplateColumns = `repeat(${size},${w}px)`;
+    for(let i=0;i<size;i++){
+        for(let j=0;j<size;j++){
+            let d = document.createElement("div");
+            d.className = "cell";
+            d.style.width = w+"px";
+            d.style.height = w+"px";
+            d.style.fontSize = fs+"px";
+            g.appendChild(d);
+        }
+    }
+    addRand();addRand();render();
+}
+function addRand(){
+    let empty = [];
+    for(let i=0;i<size;i++){
+        for(let j=0;j<size;j++){
+            if(grid[i][j]===0) empty.push([i,j]);
+        }
+    }
+    if(empty.length===0) return;
+    let [x,y] = empty[Math.floor(Math.random()*empty.length)];
+    grid[x][y] = Math.random()>0.1 ? 2 : 4;
+}
+function render(){
+    let cells = document.querySelectorAll(".cell");
+    let idx = 0;
+    for(let i=0;i<size;i++){
+        for(let j=0;j<size;j++){
+            let val = grid[i][j];
+            let cell = cells[idx++];
+            if(val===0){
+                cell.innerText = "";
+                cell.style.background = "#cdc1b4";
+            }else{
+                cell.innerText = val;
+                let [bg,fc] = colorMap[val] || ["#333","#fff"];
+                cell.style.background = bg;
+                cell.style.color = fc;
+            }
+        }
+    }
+}
+
+// 通用合并核心函数
+function mergeLine(arr){
+    let res = arr.filter(n=>n!==0);
+    for(let i=0;i<res.length-1;i++){
+        if(res[i] === res[i+1]){
+            res[i] *= 2;
+            score += res[i];
+            res.splice(i+1,1);
+        }
+    }
+    while(res.length < size) res.push(0);
+    return res;
+}
+
+// 左移
+function moveLeft(){
+    let changed = false;
+    for(let i=0;i<size;i++){
+        let old = [...grid[i]];
+        grid[i] = mergeLine(grid[i]);
+        if(old.join(",") !== grid[i].join(",")) changed = true;
+    }
+    return changed;
+}
+// 右移
+function moveRight(){
+    let changed = false;
+    for(let i=0;i<size;i++){
+        let old = [...grid[i]];
+        let rev = grid[i].reverse();
+        rev = mergeLine(rev);
+        grid[i] = rev.reverse();
+        if(old.join(",") !== grid[i].join(",")) changed = true;
+    }
+    return changed;
+}
+// 上移
+function moveUp(){
+    let changed = false;
+    for(let j=0;j<size;j++){
+        let col = [];
+        for(let i=0;i<size;i++) col.push(grid[i][j]);
+        let old = [...col];
+        col = mergeLine(col);
+        if(old.join(",") !== col.join(",")) changed = true;
+        for(let i=0;i<size;i++) grid[i][j] = col[i];
+    }
+    return changed;
+}
+// 下移
+function moveDown(){
+    let changed = false;
+    for(let j=0;j<size;j++){
+        let col = [];
+        for(let i=0;i<size;i++) col.push(grid[i][j]);
+        let old = [...col];
+        col = col.reverse();
+        col = mergeLine(col);
+        col = col.reverse();
+        if(old.join(",") !== col.join(",")) changed = true;
+        for(let i=0;i<size;i++) grid[i][j] = col[i];
+    }
+    return changed;
+}
+
+// 键盘控制
+document.addEventListener("keydown",e=>{
+    if(gameBox.style.display==="none") return;
+    let flag = false;
+    switch(e.key){
+        case "ArrowLeft": flag = moveLeft(); break;
+        case "ArrowRight": flag = moveRight(); break;
+        case "ArrowUp": flag = moveUp(); break;
+        case "ArrowDown": flag = moveDown(); break;
+    }
+    if(flag){
+        addRand();
+        render();
+        scoreSpan.innerText = score;
+    }
+})
+
+// 触屏滑动
+document.addEventListener("touchstart",e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+},{passive:true});
+
+document.addEventListener("touchend",e=>{
+    if(gameBox.style.display==="none") return;
+    endX = e.changedTouches[0].clientX;
+    endY = e.changedTouches[0].clientY;
+    let dx = endX - startX;
+    let dy = endY - startY;
+    let moveOk = false;
+    const minDis = 25;
+    if(Math.abs(dx) > Math.abs(dy)){
+        if(dx > minDis) moveOk = moveRight();
+        else if(dx < -minDis) moveOk = moveLeft();
+    }else{
+        if(dy > minDis) moveOk = moveDown();
+        else if(dy < -minDis) moveOk = moveUp();
+    }
+    if(moveOk){
+        addRand();
+        render();
+        scoreSpan.innerText = score;
+    }
+},{passive:true});
+</script>
+</body>
+</html>

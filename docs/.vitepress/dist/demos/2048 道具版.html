@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>2048道具版</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#faf8ef;display:flex;flex-direction:column;align-items:center;padding:15px;overflow:hidden;}
+h1{font-size:36px;color:#776e65;margin-bottom:8px;}
+.tool-box{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;justify-content:center;}
+.tool-btn{padding:7px 10px;border:none;border-radius:5px;background:#8f7a66;color:#fff;cursor:pointer;font-size:13px;}
+.tool-btn:active{background:#7a6553;}
+.grid-container{background:#bbada0;padding:12px;border-radius:8px;touch-action:none;}
+.grid-row{display:flex;gap:8px;margin-bottom:8px;}
+.grid-row:last-child{margin-bottom:0;}
+.cell{width:65px;height:65px;background:#cdc1b4;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;color:#776e65;user-select:none;}
+.info{margin:8px 0;color:#776e65;font-size:16px;}
+</style>
+</head>
+<body>
+<h1>2048 道具版</h1>
+<div class="info">分数：<span id="score">0</span></div>
+
+<div class="tool-box">
+    <button class="tool-btn" onclick="useSwap()">🔄换位</button>
+    <button class="tool-btn" onclick="useShuffle()">🎲洗牌</button>
+    <button class="tool-btn" onclick="useDel()">🗑️消除</button>
+    <button class="tool-btn" onclick="useDouble()">✨双倍生成</button>
+</div>
+
+<div class="grid-container" id="gameBox"></div>
+
+<script>
+const size = 4;
+let grid = [];
+let score = 0;
+let doubleSpawn = false;
+let swapMode = false;
+let swapFirst = null;
+let delMode = false;
+
+let startX=0,startY=0,endX=0,endY=0;
+
+function initGame(){
+    grid = Array(size).fill().map(()=>Array(size).fill(0));
+    score = 0;
+    doubleSpawn = false;
+    updateScore();
+    renderGrid();
+    randomAdd();
+    randomAdd();
+}
+
+function renderGrid(){
+    let html = '';
+    for(let i=0;i<size;i++){
+        html += `<div class="grid-row">`;
+        for(let j=0;j<size;j++){
+            let num = grid[i][j];
+            let bg = getColor(num);
+            html += `<div class="cell" style="background:${bg}" onclick="clickCell(${i},${j})">${num||''}</div>`;
+        }
+        html += `</div>`;
+    }
+    document.getElementById('gameBox').innerHTML = html;
+}
+
+function getColor(n){
+    let map={
+        0:'#cdc1b4',2:'#eee4da',4:'#ede0c8',8:'#f2b179',
+        16:'#f59563',32:'#f67c5f',64:'#f65e3b',128:'#edcf72',
+        256:'#edcc61',512:'#edc850',1024:'#edc53f',2048:'#edc22e'
+    };
+    return map[n]||'#3c3a32';
+}
+
+function randomAdd(){
+    let empty = [];
+    for(let i=0;i<size;i++)for(let j=0;j<size;j++)if(grid[i][j]===0)empty.push([i,j]);
+    if(!empty.length)return;
+    let [x,y] = empty[Math.floor(Math.random()*empty.length)];
+    grid[x][y] = Math.random()>0.1?2:4;
+    renderGrid();
+}
+
+document.onkeydown=e=>{
+    if(swapMode||delMode)return;
+    moveHandle(e.key);
+};
+
+document.addEventListener('touchstart',e=>{
+    if(swapMode||delMode)return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+});
+document.addEventListener('touchend',e=>{
+    if(swapMode||delMode)return;
+    endX = e.changedTouches[0].clientX;
+    endY = e.changedTouches[0].clientY;
+    let dx = endX - startX;
+    let dy = endY - startY;
+    if(Math.abs(dx)>Math.abs(dy)){
+        if(dx>30)moveHandle('right');
+        else if(dx<-30)moveHandle('left');
+    }else{
+        if(dy>30)moveHandle('down');
+        else if(dy<-30)moveHandle('up');
+    }
+});
+
+function moveHandle(dir){
+    switch(dir){
+        case 'ArrowUp':case 'up':moveUp();break;
+        case 'ArrowDown':case 'down':moveDown();break;
+        case 'ArrowLeft':case 'left':moveLeft();break;
+        case 'ArrowRight':case 'right':moveRight();break;
+    }
+    if(doubleSpawn){randomAdd();doubleSpawn=false;}
+    randomAdd();
+}
+
+function moveLeft(){
+    for(let i=0;i<size;i++){
+        let arr = grid[i].filter(v=>v);
+        for(let j=0;j<arr.length-1;j++){
+            if(arr[j]===arr[j+1]){
+                arr[j]*=2;
+                score+=arr[j];
+                arr.splice(j+1,1);
+            }
+        }
+        while(arr.length<size)arr.push(0);
+        grid[i]=arr;
+    }
+    updateScore();renderGrid();
+}
+function moveRight(){grid.forEach(r=>r.reverse());moveLeft();grid.forEach(r=>r.reverse());}
+function moveUp(){
+    for(let j=0;j<size;j++){
+        let arr=[];
+        for(let i=0;i<size;i++)if(grid[i][j])arr.push(grid[i][j]);
+        for(let k=0;k<arr.length-1;k++)if(arr[k]===arr[k+1]){arr[k]*=2;score+=arr[k];arr.splice(k+1,1);}
+        while(arr.length<size)arr.push(0);
+        for(let i=0;i<size;i++)grid[i][j]=arr[i];
+    }
+    updateScore();renderGrid();
+}
+function moveDown(){
+    for(let j=0;j<size;j++){
+        let arr=[];
+        for(let i=size-1;i>=0;i--)if(grid[i][j])arr.push(grid[i][j]);
+        for(let k=0;k<arr.length-1;k++)if(arr[k]===arr[k+1]){arr[k]*=2;score+=arr[k];arr.splice(k+1,1);}
+        while(arr.length<size)arr.push(0);
+        for(let i=0;i<size;i++)grid[size-1-i][j]=arr[i];
+    }
+    updateScore();renderGrid();
+}
+function updateScore(){document.getElementById('score').innerText=score;}
+
+function clickCell(x,y){
+    if(swapMode){
+        if(!swapFirst){swapFirst=[x,y];}
+        else{
+            let [x1,y1]=swapFirst;
+            [grid[x1][y1],grid[x][y]]=[grid[x][y],grid[x1][y1]];
+            swapMode=false;swapFirst=null;renderGrid();
+        }
+        return;
+    }
+    if(delMode){
+        grid[x][y]=0;delMode=false;renderGrid();
+    }
+}
+
+function useSwap(){swapMode=true;swapFirst=null;}
+function useShuffle(){
+    let nums=[];
+    grid.forEach(r=>r.forEach(v=>{if(v)nums.push(v);}));
+    nums.sort(()=>Math.random()-0.5);
+    let idx=0;
+    for(let i=0;i<size;i++)for(let j=0;j<size;j++)grid[i][j]=nums[idx++]||0;
+    renderGrid();
+}
+function useDel(){delMode=true;}
+function useDouble(){doubleSpawn=true;}
+
+window.onload=initGame;
+</script>
+</body>
+</html>

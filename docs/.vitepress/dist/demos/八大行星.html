@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>标准配色太阳系 含月球+清晰冥王星</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;overflow:hidden;font-family:微软雅黑;}
+canvas{width:100vw;height:100vh;display:block;}
+.speed-box{position:fixed;top:12px;left:12px;z-index:999;display:flex;gap:6px;flex-wrap:wrap;}
+.speed-btn{padding:6px 10px;border:none;border-radius:5px;background:#ff7b00;color:#fff;font-size:13px;}
+.info-panel{position:fixed;right:12px;bottom:15px;width:88%;max-width:340px;background:rgba(0,25,50,0.94);color:#fff;padding:16px;border-radius:12px;line-height:1.8;font-size:14px;display:none;z-index:1000;border:1px solid #60b8ff;}
+.close-btn{position:absolute;top:6px;right:8px;font-size:18px;color:#ff5555;cursor:pointer;}
+.tip-text{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);color:#eee;font-size:12px;z-index:998;}
+</style>
+</head>
+<body>
+<div class="speed-box">
+    <button class="speed-btn" onclick="setSpeed(0)">停止</button>
+    <button class="speed-btn" onclick="setSpeed(0.4)">慢速</button>
+    <button class="speed-btn" onclick="setSpeed(1)">正常</button>
+    <button class="speed-btn" onclick="setSpeed(2)">快速</button>
+</div>
+<div class="tip-text">拖动转视角 | 双指自由缩放大小 | 点击天体查看文字介绍</div>
+<div class="info-panel" id="infoBox">
+    <span class="close-btn" onclick="closeInfo()">×</span>
+    <div id="infoText"></div>
+</div>
+<canvas id="mainCanvas"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.142.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.142.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+let speedRate = 1;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70,innerWidth/innerHeight,0.2,5000);
+camera.position.set(0,120,220);
+const renderer = new THREE.WebGLRenderer({canvas:mainCanvas,antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setClearColor(0x000020);
+
+// 超大范围缩放 可缩极小可放极大
+const controls = new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping = true;
+controls.minDistance = 8;
+controls.maxDistance = 900;
+controls.enableZoom = true;
+controls.enableRotate = true;
+controls.enablePan = false;
+
+// 星空背景
+function createUniverse(){
+    const starGeo = new THREE.BufferGeometry();
+    const starNum = 12000;
+    const pos = new Float32Array(starNum*3);
+    for(let i=0;i<starNum*3;i++) pos[i]=(Math.random()-0.5)*3000;
+    starGeo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    const starMat = new THREE.PointsMaterial({color:0xffffff,size:1.0});
+    scene.add(new THREE.Points(starGeo,starMat));
+}
+createUniverse();
+
+// 主次光源 自然明暗面
+scene.add(new THREE.AmbientLight(0x333355,0.35));
+const sunMainLight = new THREE.PointLight(0xffff66,5,800);
+scene.add(sunMainLight);
+
+// 标准天文贴图
+const loader = new THREE.TextureLoader();
+const tex = {
+    sun:loader.load('https://threejs.org/examples/textures/sun.jpg'),
+    mercury:loader.load('https://threejs.org/examples/textures/planets/mercury.jpg'),
+    venus:loader.load('https://threejs.org/examples/textures/planets/venus.jpg'),
+    earth:loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+    cloud:loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.jpg'),
+    moon:loader.load('https://threejs.org/examples/textures/planets/moon_1024.jpg'),
+    mars:loader.load('https://threejs.org/examples/textures/planets/mars.jpg'),
+    jupiter:loader.load('https://threejs.org/examples/textures/planets/jupiter.jpg'),
+    saturn:loader.load('https://threejs.org/examples/textures/planets/saturn.jpg'),
+    satRing:loader.load('https://threejs.org/examples/textures/planets/saturn_ring.png'),
+    uranus:loader.load('https://threejs.org/examples/textures/planets/uranus.jpg'),
+    neptune:loader.load('https://threejs.org/examples/textures/planets/neptune.jpg'),
+    pluto:loader.load('https://threejs.org/examples/textures/planets/pluto.jpg')
+};
+
+// 精准颜色+尺寸配置
+const bodyList = [
+{name:"太阳",r:15,dis:0,gsp:0,zsp:0.006,isSun:true,tilt:0,
+desc:"太阳系中心恒星，明亮金黄色，持续核聚变释放光热，是全系天体能量来源。"},
+{name:"水星",r:2.2,dis:26,gsp:0.03,zsp:0.007,tilt:0,
+desc:"体积最小行星，整体暗灰色，表面布满陨石坑，无厚大气层，昼夜温差极大。"},
+{name:"金星",r:3.3,dis:39,gsp:0.024,zsp:0.006,tilt:0,
+desc:"浅米黄色星体，亮度极高，浓厚大气形成强温室效应，为太阳系地表温度最高行星。"},
+{name:"地球",r:3.8,dis:53,gsp:0.018,zsp:0.0055,hasCloud:true,tilt:0,
+desc:"主体蔚蓝色海洋，搭配青绿色陆地，外层覆白色云层，唯一孕育生命的宜居星球。"},
+{name:"月球",r:1.1,dis:9,gsp:0.055,zsp:0.013,isMoon:true,tilt:0.1,
+desc:"地球天然卫星，浅灰白色带暗色月海纹路，围绕地球稳定公转，尺寸适中比例标准。"},
+{name:"火星",r:3,dis:68,gsp:0.014,zsp:0.005,tilt:0,
+desc:"纯正橘红色星球，地表富含氧化铁物质，地貌多峡谷荒漠，是人类深空探测重点目标。"},
+{name:"木星",r:8.5,dis:92,gsp:0.01,zsp:0.0045,tilt:0,
+desc:"太阳系最大气态行星，黄棕相间条纹清晰，拥有标志性大红斑巨型风暴，引力强大守护内圈行星。"},
+{name:"土星",r:7.2,dis:120,gsp:0.007,zsp:0.004,hasRing:true,tilt:0,
+desc:"柔和淡黄色星体，外围配有完整通透光环，光环由冰块与碎石组成，整体密度较小。"},
+{name:"天王星",r:5.1,dis:155,gsp:0.005,zsp:0.0035,tilt:0,
+desc:"清新淡青蓝色冰巨行星，自转姿态平躺倾斜，远离太阳温度极低。"},
+{name:"海王星",r:4.9,dis:190,gsp:0.003,zsp:0.003,tilt:0,
+desc:"深邃藏蓝色星体，拥有太阳系最强宇宙风暴，地处太阳系边缘地带，环境严寒。"},
+{name:"冥王星",r:1.2,dis:230,gsp:0.0015,zsp:0.0025,tilt:0.65,
+desc:"矮行星，浅灰褐色清晰质感，尺寸略大于月球六分之一比例，轨道大幅倾斜偏离黄道面，地处太阳系最外侧，环境极度寒冷。"}
+];
+
+// 绘制公转轨道
+function makeOrbit(d,tiltAngle){
+    const geo = new THREE.BufferGeometry();
+    const pts = [];
+    for(let i=0;i<=100;i++){
+        let a = i/100*Math.PI*2;
+        let x = Math.cos(a)*d;
+        let z = Math.sin(a)*d;
+        let y = z * Math.sin(tiltAngle);
+        pts.push(x,y,z);
+    }
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+    const mat = new THREE.LineBasicMaterial({color:0x667799,transparent:true,opacity:0.45});
+    scene.add(new THREE.LineLoop(geo,mat));
+}
+bodyList.forEach(v=>{if(v.dis>0&&!v.isMoon)makeOrbit(v.dis,v.tilt);});
+
+let allBodies = [];
+let moonObj = null,earthObj = null;
+let ray = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+
+// 批量创建天体 修正全部异色问题
+bodyList.forEach(item=>{
+    const group = new THREE.Group();
+    group.rotation.x = item.tilt;
+    const sphere = new THREE.SphereGeometry(item.r,42,42);
+    let mat;
+    if(item.isSun){
+        mat = new THREE.MeshBasicMaterial({map:tex.sun});
+        let glowGeo = new THREE.SphereGeometry(item.r+1.6,42,42);
+        let glowMat = new THREE.MeshBasicMaterial({color:0xffff77,transparent:true,opacity:0.4});
+        group.add(new THREE.Mesh(glowGeo,glowMat));
+    }else if(item.isMoon){
+        mat = new THREE.MeshPhongMaterial({map:tex.moon});
+    }else if(item.hasCloud){
+        mat = new THREE.MeshPhongMaterial({map:tex.earth,specularMap:tex.cloud});
+    }else{
+        mat = new THREE.MeshPhongMaterial({map:tex[item.name.toLowerCase()]});
+    }
+    const mesh = new THREE.Mesh(sphere,mat);
+    mesh.userData.info = item;
+    group.add(mesh);
+    // 土星专属光环
+    if(item.hasRing){
+        const ringGeo = new THREE.RingGeometry(item.r+2.5,item.r+6,64);
+        const ringMat = new THREE.MeshBasicMaterial({map:tex.satRing,side:THREE.DoubleSide,transparent:true,opacity:0.75});
+        const ring = new THREE.Mesh(ringGeo,ringMat);
+        ring.rotation.x = Math.PI/2;
+        mesh.add(ring);
+    }
+    scene.add(group);
+    allBodies.push({obj:group,d:item.dis,gs:item.gsp,zs:item.zsp,ang:Math.random()*Math.PI*2,data:item});
+    if(item.name==="月球")moonObj=group;
+    if(item.name==="地球")earthObj=group;
+});
+
+// 动态流动小行星带
+function addAsteroidBelt(){
+    const beltArr = [];
+    for(let i=0;i<1200;i++){
+        let s = Math.random()*0.5+0.1;
+        let m = new THREE.MeshStandardMaterial({color:0x756555});
+        let ast = new THREE.Mesh(new THREE.SphereGeometry(s,6,6),m);
+        let d = 72+Math.random()*22;
+        let a = Math.random()*Math.PI*2;
+        let sp = 0.002+Math.random()*0.003;
+        ast.position.set(Math.cos(a)*d,0,Math.sin(a)*d);
+        scene.add(ast);
+        beltArr.push({body:ast,dis:d,angle:a,speed:sp});
+    }
+    function astMove(){
+        beltArr.forEach(ast=>{
+            ast.angle += ast.speed*speedRate;
+            ast.body.position.x=Math.cos(ast.angle)*ast.dis;
+            ast.body.position.z=Math.sin(ast.angle)*ast.dis;
+        })
+        requestAnimationFrame(astMove);
+    }
+    astMove();
+}
+addAsteroidBelt();
+
+function setSpeed(n){speedRate=n;}
+function closeInfo(){document.getElementById('infoBox').style.display='none';}
+
+// 点击仅出文字 无语音朗读
+window.addEventListener('click',e=>{
+    mouse.x=(e.clientX/innerWidth)*2-1;
+    mouse.y=-(e.clientY/innerHeight)*2+1;
+    ray.setFromCamera(mouse,camera);
+    let res=[];
+    allBodies.forEach(b=>res.push(...ray.intersectObjects(b.obj.children,true)));
+    if(res.length>0){
+        let info=res[0].object.userData.info;
+        document.getElementById('infoText').innerHTML=`<strong style="font-size:16px">${info.name} 详细介绍</strong><br><br>${info.desc}`;
+        document.getElementById('infoBox').style.display='block';
+    }
+});
+
+// 全局运动循环
+function loop(){
+    requestAnimationFrame(loop);
+    allBodies.forEach(b=>{
+        if(!b.data.isMoon&&b.d>0){
+            b.ang += b.gs*speedRate;
+            b.obj.position.x=Math.cos(b.ang)*b.d;
+            b.obj.position.z=Math.sin(b.ang)*b.d;
+        }
+        b.obj.children[0].rotation.y += b.zs*speedRate;
+    });
+    // 月球环绕地球公转
+    if(moonObj&&earthObj){
+        let t=Date.now()*0.0005*speedRate;
+        moonObj.position.x=earthObj.position.x+Math.cos(t)*9;
+        moonObj.position.z=earthObj.position.z+Math.sin(t)*9;
+    }
+    controls.update();
+    renderer.render(scene,camera);
+}
+loop();
+
+window.onresize=()=>{
+    camera.aspect=innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+}
+</script>
+</body>
+</html>

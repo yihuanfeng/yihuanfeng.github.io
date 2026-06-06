@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>反向2048</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{display:flex;flex-direction:column;align-items:center;background:#faf8ef;padding:20px 0;}
+h2{color:#776e65;margin-bottom:8px;}
+.desc{color:#887766;margin-bottom:15px;text-align:center;}
+#gameWrap{background:#bbada0;padding:12px;border-radius:8px;}
+.row{display:flex;}
+.cell{width:72px;height:72px;background:#cdc1b4;margin:4px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;color:#776e65;}
+.cell-2{background:#eee4da;}
+.cell-4{background:#ede0c8;}
+.cell-8{background:#f2b179;color:white;}
+.cell-16{background:#f59563;color:white;}
+.cell-32{background:#f67c5f;color:white;}
+.cell-64{background:#f65e3b;color:white;}
+.cell-128{background:#edcf72;color:white;}
+.cell-256{background:#edcc61;color:white;}
+.cell-512{background:#edc850;color:white;}
+.cell-1024{background:#f2b660;color:white;font-size:20px;}
+.cell-2048{background:#f2d060;color:white;font-size:20px;}
+</style>
+</head>
+<body>
+<h2>反向2048</h2>
+<div class="desc">原版正方向滑动 | 同数合并减半 | 凑出2获胜</div>
+<div id="gameWrap"></div>
+
+<script>
+const size = 4;
+let grid = [];
+let canMove = true;
+
+function getClass(n){
+    return n ? `cell cell-${n}` : "cell";
+}
+
+function initGame(){
+    grid = Array(size).fill(0).map(()=>Array(size).fill(0));
+    spawnNum();
+    spawnNum();
+    render();
+}
+
+function spawnNum(){
+    let empty = [];
+    for(let i=0;i<size;i++){
+        for(let j=0;j<size;j++){
+            if(grid[i][j]===0) empty.push([i,j]);
+        }
+    }
+    if(empty.length===0) return;
+    let [x,y] = empty[Math.floor(Math.random()*empty.length)];
+    let nums = [128,128,256,256,512];
+    grid[x][y] = nums[Math.floor(Math.random()*nums.length)];
+}
+
+function render(){
+    let html = "";
+    for(let i=0;i<size;i++){
+        html += `<div class="row">`;
+        for(let j=0;j<size;j++){
+            let val = grid[i][j];
+            html += `<div class="${getClass(val)}">${val||""}</div>`;
+        }
+        html += `</div>`;
+    }
+    document.getElementById("gameWrap").innerHTML = html;
+}
+
+function moveLeft(){
+    let isChange = false;
+    for(let i=0;i<size;i++){
+        let line = grid[i].filter(v=>v);
+        for(let k=0;k<line.length-1;k++){
+            if(line[k] === line[k+1]){
+                line[k] /= 2;
+                line.splice(k+1,1);
+                isChange = true;
+            }
+        }
+        let newLine = Array(size).fill(0);
+        line.forEach((v,idx)=>newLine[idx]=v);
+        if(JSON.stringify(grid[i])!==JSON.stringify(newLine)) isChange=true;
+        grid[i] = newLine;
+    }
+    return isChange;
+}
+
+function rotateGrid(times){
+    while(times--){
+        let temp = Array(size).fill(0).map(()=>Array(size).fill(0));
+        for(let i=0;i<size;i++){
+            for(let j=0;j<size;j++){
+                temp[j][size-1-i] = grid[i][j];
+            }
+        }
+        grid = temp;
+    }
+}
+
+// 修正上下方向，和原版2048完全一致
+function move(dir){
+    if(!canMove) return;
+    let changed = false;
+    switch(dir){
+        case "left": changed = moveLeft(); break;
+        case "right": rotateGrid(2); changed=moveLeft(); rotateGrid(2); break;
+        case "up": rotateGrid(3); changed=moveLeft(); rotateGrid(1); break;
+        case "down": rotateGrid(1); changed=moveLeft(); rotateGrid(3); break;
+    }
+    if(changed){
+        canMove = false;
+        setTimeout(()=>{
+            spawnNum();
+            render();
+            checkWin();
+            canMove = true;
+        },100);
+    }
+}
+
+function checkWin(){
+    for(let i=0;i<size;i++){
+        if(grid[i].includes(2)){
+            alert("合成2成功，通关啦！");
+            initGame();
+        }
+    }
+}
+
+// 键盘按键
+document.addEventListener("keydown",e=>{
+    switch(e.keyCode){
+        case 37:move("left");break;
+        case 38:move("up");break;
+        case 39:move("right");break;
+        case 40:move("down");break;
+    }
+});
+
+// 触屏滑动同步修正方向
+let startX,startY;
+document.addEventListener("touchstart",e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+});
+document.addEventListener("touchend",e=>{
+    let endX = e.changedTouches[0].clientX;
+    let endY = e.changedTouches[0].clientY;
+    let dx = endX - startX;
+    let dy = endY - startY;
+    if(Math.abs(dx) > Math.abs(dy)){
+        dx > 30 ? move("right") : dx < -30 && move("left");
+    }else{
+        dy > 30 ? move("down") : dy < -30 && move("up");
+    }
+});
+
+initGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手势控制图形</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .main-canvas {
+            width: 800px;
+            height: 600px;
+            border: 4px solid #fff;
+            border-radius: 16px;
+            background: #000;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .camera-window {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 220px;
+            height: 160px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .console {
+            width: 800px;
+            height: 180px;
+            background: #111;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #0f0;
+            overflow-y: auto;
+            line-height: 1.4;
+        }
+
+        .tip {
+            margin: 15px 0;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .gesture-text {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>✨ 手势控制图形</h1>
+
+    <div class="tip">
+        👉 拇指碰食指 = ⭐ 五角星<br>
+        👉 手掌张开 = 🟢 圆形星阵<br>
+        👉 伸出一根手指 = ⭐ 满屏大五角星<br>
+        👉 其他手势 = 🔷 正方形星阵
+    </div>
+
+    <div class="main-canvas">
+        <canvas id="mainCanvas" width="800" height="600"></canvas>
+        <div id="gestureText" class="gesture-text">等待识别...</div>
+    </div>
+
+    <div class="camera-window">
+        <video id="video" autoplay muted></video>
+    </div>
+
+    <h3>📝 实时控制台</h3>
+    <div id="console" class="console">初始化中...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+
+    <script>
+        const video = document.getElementById('video');
+        const mainCanvas = document.getElementById('mainCanvas');
+        const ctx = mainCanvas.getContext('2d');
+        const gestureText = document.getElementById('gestureText');
+        const consoleLog = document.getElementById('console');
+
+        function log(text) {
+            consoleLog.innerHTML += `[${new Date().toLocaleTimeString()}] ${text}\n`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        async function setupCamera() {
+            log("正在打开摄像头...");
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            return new Promise(resolve => {
+                video.onloadedmetadata = () => {
+                    log("摄像头已启动！");
+                    resolve(video);
+                };
+            });
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+        }
+
+        function drawSmallStar(x, y, size, color) {
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const a = (i * 144 * Math.PI) / 180;
+                const px = x + Math.cos(a) * size;
+                const py = y + Math.sin(a) * size;
+                i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawStarShape(x, y) {
+            clearCanvas();
+            gestureText.textContent = "当前：⭐ 五角星";
+            for (let i = 0; i < 50; i++) {
+                const a = (i * 144 * Math.PI) / 180;
+                const xx = x + Math.cos(a) * (i * 3);
+                const yy = y + Math.sin(a) * (i * 3);
+                drawSmallStar(xx, yy, 6, "#ffeb3b");
+            }
+        }
+
+        function drawCircleShape(x, y) {
+            clearCanvas();
+            gestureText.textContent = "当前：🟢 圆形星阵";
+            for (let i = 0; i < 120; i++) {
+                const a = (i / 120) * Math.PI * 2;
+                const xx = x + Math.cos(a) * 120;
+                const yy = y + Math.sin(a) * 120;
+                drawSmallStar(xx, yy, 5, "#4caf50");
+            }
+        }
+
+        function drawSquareShape(x, y) {
+            clearCanvas();
+            gestureText.textContent = "当前：🔷 正方形星阵";
+            for (let i = -100; i <= 100; i += 18) {
+                for (let j = -100; j <= 100; j += 18) {
+                    drawSmallStar(x + i, y + j, 4, "#2196f3");
+                }
+            }
+        }
+
+        // ✅ 伸出一根手指 = 满屏大五角星
+        function drawBigFullStar() {
+            clearCanvas();
+            gestureText.textContent = "当前：⭐ 满屏大五角星";
+            drawSmallStar(400, 300, 220, "#ffeb3b");
+        }
+
+        function detectGesture(landmarks) {
+            const thumbTip = landmarks[4];
+            const indexTip = landmarks[8];
+            const midTip = landmarks[12];
+            const ringTip = landmarks[16];
+            const pinkyTip = landmarks[20];
+
+            const dist = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
+            if (dist < 0.12) return { type: 'star' };
+
+            const isOpen = 
+                indexTip.y < landmarks[6].y - 0.02 &&
+                midTip.y < landmarks[10].y - 0.02 &&
+                ringTip.y < landmarks[14].y - 0.02 &&
+                pinkyTip.y < landmarks[18].y - 0.02;
+            if (isOpen) return { type: 'circle' };
+
+            const oneFinger = 
+                indexTip.y < landmarks[6].y - 0.02 &&
+                midTip.y > landmarks[10].y + 0.02 &&
+                ringTip.y > landmarks[14].y + 0.02 &&
+                pinkyTip.y > landmarks[18].y + 0.02;
+            if (oneFinger) return { type: 'bigstar' };
+
+            return { type: 'square' };
+        }
+
+        async function main() {
+            await setupCamera();
+            log("正在加载AI模型...");
+
+            const hands = new Hands({
+                locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+            });
+
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 0,
+                minDetectionConfidence: 0.1,
+                minTrackingConfidence: 0.1
+            });
+
+            let lastGesture = '';
+
+            hands.onResults(results => {
+                const arr = results.multiHandLandmarks || [];
+
+                if (arr.length === 1) {
+                    const g = detectGesture(arr[0]);
+                    if (g.type !== lastGesture) {
+                        log(`✅ 识别：${g.type=='star'?'五角星':g.type=='circle'?'圆形星阵':g.type=='bigstar'?'满屏大五角星':'正方形星阵'}`);
+                        lastGesture = g.type;
+                    }
+
+                    if (g.type === 'star') drawStarShape(400, 300);
+                    if (g.type === 'circle') drawCircleShape(400, 300);
+                    if (g.type === 'bigstar') drawBigFullStar();
+                    if (g.type === 'square') drawSquareShape(400, 300);
+                }
+            });
+
+            log("AI加载完成 ✅ 开始玩！");
+
+            async function loop() {
+                if (video.readyState === 4) await hands.send({ image: video });
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        main();
+    </script>
+</body>
+</html>

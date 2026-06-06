@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html data-sandbox-lang="zh">
+  <head>
+    <script>window._sandbox_context = {"locale":"zh","sourceCodeType":"html","document":{"referrer":""},"location":{"search":"?a="}}</script><script>window.channelId="";window._img_loading = "//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/image/img_loading.b156c4b8.gif";</script>
+  <title>Sandbox Document</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script>
+    ;(function (w, d, u, b, n, pc, ga, ae, po, s, p, e, t, pp) {pc = 'precollect';ga
+    = 'getAttribute';ae = 'addEventListener';po = 'PerformanceObserver';s = function
+    (m) {p = [].slice.call(arguments);p.push(Date.now(), location.href);(m == pc ?
+    s.p.a : s.q).push(p)};s.q = [];s.p = { a: [] };w[n] = s;e =
+    document.createElement('script');e.src = u + '?bid=' + b + '&globalName=' +
+    n;e.crossOrigin = u.indexOf('sdk-web') > 0 ? 'anonymous' :
+    'use-credentials';d.getElementsByTagName('head')[0].appendChild(e);if (ae in w)
+    {s.pcErr = function (e) {e = e || w.event;t = e.target || e.srcElement;if (t
+    instanceof Element || t instanceof HTMLElement) {if (t[ga]('integrity'))
+    {w[n](pc, 'sri', t[ga]('href') || t[ga]('src'))} else {w[n](pc, 'st', { tagName:
+    t.tagName, url: t[ga]('href') || t[ga]('src') })}} else {w[n](pc, 'err', e.error)}};s.pcRej = function (e) {e = e || w.event;w[n](pc, 'reject',
+    e.reason || (e.detail && e.detail.reason))};w[ae]('error', s.pcErr,
+    true);w[ae]('unhandledrejection', s.pcRej,
+    true);};if('PerformanceLongTaskTiming' in w) {pp = s.pp = { entries: []
+    };pp.observer = new PerformanceObserver(function (l) {pp.entries =
+    pp.entries.concat(l.getEntries())});pp.observer.observe({ entryTypes:
+    ['longtask']
+    })}})(window,document,'https://lf3-short.ibytedapm.com/slardar/fe/sdk-web/browser.cn.js','flow_web','_slardar')
+    window._slardar('init', {
+        bid: 'flow_web',
+        env: 'cn-release-production-samantha',
+        release: '1.0.0.475',
+        pid: 'html_preview_sandbox',
+        plugins: {
+          blankScreen: {
+            screenshot: true,
+            quality: 0.5,
+          },
+        }
+    })
+    window._slardar('start')
+  </script><script>
+  (function () {
+    function initPerformanceObserver() {
+  function dispatchActionToParent(action) {
+    window.parent.postMessage(
+      {
+        action,
+        channelId: window.channelId
+      },
+      '*'
+    );
+  }
+
+  const observer = new PerformanceObserver((list) => {
+    const entries = list.getEntries();
+    for (const entry of entries) {
+      if (entry.name === 'first-paint') {
+        dispatchActionToParent('Renderer::Performance::FirstPaint');
+      }
+      if (entry.name === 'first-contentful-paint') {
+        dispatchActionToParent('Renderer::Performance::FirstContentfulPaint');
+      }
+    }
+  });
+
+  observer.observe({ type: 'paint', buffered: true });
+}
+    initPerformanceObserver()
+  })()
+  </script><script>
+  (function () {
+    function replaceImages() {
+  function dispatchActionToParent(action, payload) {
+    window.parent.postMessage(
+      {
+        action,
+        payload,
+        channelId: window.channelId
+      },
+      '*'
+    );
+  }
+
+  function handleImageMutation(img, oldSrc) {
+    if (
+    !img?.src ||
+    img.src.endsWith(window._img_loading) ||
+    img.src.match(/\/html-image-(loading|reject)\.[\w\d]+\.(gif|jpe?g)$/))
+    {
+      return;
+    }
+
+    if (img.src !== oldSrc) {
+      const currentSrc = img.src;
+      if (!['-1', '0', '1'].includes(img.dataset.reviewStatus || '')) {
+        img.src = window._img_loading;
+        img.dataset.src = currentSrc;
+        img.dataset.reviewStatus = '-1';
+      }
+
+      dispatchActionToParent('newImageFound', {
+        key: img.dataset.key || '',
+        src: currentSrc,
+        attributes: { alt: img.attributes.getNamedItem('alt')?.value }
+      });
+    }
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target === document.head) {
+        return;
+      }
+
+      // 新增节点
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLImageElement) {
+            handleImageMutation(node);
+          } else if (node instanceof HTMLElement) {
+            // 递归处理子元素里的 img
+            node.querySelectorAll?.('img').forEach((img) => {
+              handleImageMutation(img);
+            });
+          }
+        });
+      }
+      // 属性变化
+      if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+        const target = mutation.target;
+        if (target instanceof HTMLImageElement) {
+          handleImageMutation(target, mutation.oldValue);
+        }
+      }
+    });
+  });
+
+  const observe = () => {
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['src'],
+      attributeOldValue: true
+    });
+  };
+
+  observe();
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // 由 apps/preview/src/pages/renderer/image-replacer.ts 处理
+    observer.disconnect();
+  });
+}
+    replaceImages()
+  })()
+  </script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/lib-polyfill.35e60c26.js" crossorigin="anonymous"></script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/lib-react.d2e0d445.js" crossorigin="anonymous"></script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/902.3b9e798e.js" crossorigin="anonymous"></script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/674.b49cde80.js" crossorigin="anonymous"></script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/722.b7adfbe0.js" crossorigin="anonymous"></script><script defer src="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/js/html_renderer.364eee2c.js" crossorigin="anonymous"></script><link href="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/css/674.a4d640e9.css" rel="stylesheet" crossorigin="anonymous"><link href="//lf-flow-web-cdn.doubao.com/obj/flow-doubao/html_preview/1.0.0.475/static/css/html_renderer.bd4e4028.css" rel="stylesheet" crossorigin="anonymous"></head>
+  <body>
+    <div id="root"></div>
+    <html lang="zh-CN" data-doubao-line="2" data-doubao-column="1"><head data-doubao-line="3" data-doubao-column="1">
+<meta charset="UTF-8" data-doubao-line="4" data-doubao-column="1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-doubao-line="5" data-doubao-column="1">
+<title data-doubao-line="6" data-doubao-column="1">科学小实验：谁能顶起瓶塞？</title>
+<style data-doubao-line="7" data-doubao-column="1">*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#eef6ff;padding:10px}.title{text-align:center;margin:10px 0;font-size:20px;font-weight:bold}.task{background:#fff;border:2px solid #4a87ff;border-radius:10px;padding:12px;text-align:center;margin:0 auto 10px;max-width:400px;font-size:15px;line-height:1.4}.stage{position:relative;width:100%;max-width:400px;height:460px;background:#fff;border:2px solid #ccc;border-radius:12px;margin:0 auto;overflow:hidden}.bottle{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:100px;height:220px;border:2px solid #333;border-radius:12px;background:#fff}.neck{position:absolute;top:-26px;left:50%;transform:translateX(-50%);width:36px;height:26px;border:2px solid #333;border-bottom:none;background:#fff}.liquid{position:absolute;bottom:0;left:0;width:100%;height:0;background:#ffdd77;transition:height 0.5s}.cap{position:absolute;top:-36px;left:50%;transform:translateX(-50%);width:44px;height:14px;background:#666;border-radius:4px;display:none}.drag-item{width:70px;height:70px;background:#f8f8f8;border:1px solid #888;border-radius:8px;display:flex;align-items:center;justify-content:center;position:absolute;cursor:grab;user-select:none;touch-action:none;font-size:14px}#vinegar{bottom:20px;left:20px}#soda{bottom:20px;left:100px}#sugar{bottom:20px;left:180px}#salt{bottom:20px;left:260px}#water{bottom:20px;left:340px}#cap-item{bottom:120px;left:20px}#startBtn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);padding:12px 24px;background:#27ae60;color:white;font-size:16px;border:none;border-radius:8px;display:none}#result{position:absolute;top:20px;left:50%;transform:translateX(-50%);font-size:18px;font-weight:bold;color:#d63031;text-align:center;width:90%;display:none}@keyframes fly{0%{top:-36px;opacity:1}100%{top:-180px;opacity:0}}.fly{animation:fly 0.8s forwards}</style>
+<style>:root {
+    
+    }
+  img[data-key]:not([data-review-status='0']) { object-fit: cover !important; }
+  </style></head>
+
+<body data-doubao-line="145" data-doubao-column="1">
+<div class="title" data-doubao-line="146" data-doubao-column="1" data-doubao-key="0">科学小实验</div>
+
+<div class="task" data-doubao-line="148" data-doubao-column="1" data-doubao-key="1">
+任务：找出哪种组合能产生气体，把瓶塞顶出来<br data-doubao-line="149" data-doubao-column="22" data-doubao-key="2">
+操作：1.把材料拖进瓶子  2.拖入瓶盖  3.点击开始实验
+</div>
+
+<div class="stage" id="stage" data-doubao-line="153" data-doubao-column="1" data-doubao-key="3">
+  <div class="bottle" id="bottle" data-doubao-line="154" data-doubao-column="3" data-doubao-key="4">
+    <div class="neck" data-doubao-line="155" data-doubao-column="5" data-doubao-key="5"></div>
+    <div class="liquid" id="liquid" data-doubao-line="156" data-doubao-column="5" data-doubao-key="6"></div>
+  </div>
+  <div class="cap" id="cap-on-bottle" data-doubao-line="158" data-doubao-column="3" data-doubao-key="7"></div>
+
+  <div class="drag-item" id="vinegar" data-doubao-line="160" data-doubao-column="3" data-doubao-key="8">白醋</div>
+  <div class="drag-item" id="soda" data-doubao-line="161" data-doubao-column="3" data-doubao-key="9">小苏打</div>
+  <div class="drag-item" id="sugar" data-doubao-line="162" data-doubao-column="3" data-doubao-key="10">糖</div>
+  <div class="drag-item" id="salt" data-doubao-line="163" data-doubao-column="3" data-doubao-key="11">盐</div>
+  <div class="drag-item" id="water" data-doubao-line="164" data-doubao-column="3" data-doubao-key="12">水</div>
+  <div class="drag-item" id="cap-item" data-doubao-line="165" data-doubao-column="3" data-doubao-key="13">瓶盖</div>
+
+  <button id="startBtn" data-doubao-line="167" data-doubao-column="3" data-doubao-key="14">开始实验</button>
+  <div id="result" data-doubao-line="168" data-doubao-column="3" data-doubao-key="15"></div>
+</div>
+
+<script data-doubao-line="171" data-doubao-column="1" data-doubao-key="16">
+let currentDrag = null;
+let offsetX = 0;
+let offsetY = 0;
+let contents = [];
+let hasCap = false;
+
+const startBtn = document.getElementById('startBtn');
+const result = document.getElementById('result');
+const capOnBottle = document.getElementById('cap-on-bottle');
+const liquid = document.getElementById('liquid');
+
+document.querySelectorAll('.drag-item').forEach(el => {
+  el.addEventListener('mousedown', startDrag);
+  el.addEventListener('touchstart', startDrag, {passive:false});
+  el.addEventListener('mouseup', endDrag);
+  el.addEventListener('touchend', endDrag);
+});
+
+document.addEventListener('mousemove', dragMove);
+document.addEventListener('touchmove', dragMove, {passive:false});
+
+function startDrag(e){
+  e.preventDefault();
+  currentDrag = this;
+  let x = e.clientX || e.touches[0].clientX;
+  let y = e.clientY || e.touches[0].clientY;
+  let rect = currentDrag.getBoundingClientRect();
+  offsetX = x - rect.left;
+  offsetY = y - rect.top;
+  currentDrag.style.zIndex = 100;
+}
+
+function dragMove(e){
+  if(!currentDrag) return;
+  e.preventDefault();
+  let x = e.clientX || e.touches[0].clientX;
+  let y = e.clientY || e.touches[0].clientY;
+  let stageRect = document.getElementById('stage').getBoundingClientRect();
+  let left = x - stageRect.left - offsetX;
+  let top = y - stageRect.top - offsetY;
+  currentDrag.style.left = left + 'px';
+  currentDrag.style.top = top + 'px';
+}
+
+function endDrag(e){
+  if(!currentDrag) return;
+  let bottle = document.getElementById('bottle');
+  let bRect = bottle.getBoundingClientRect();
+  let elRect = currentDrag.getBoundingClientRect();
+
+  let inBottle = (
+    elRect.right > bRect.left &&
+    elRect.left < bRect.right &&
+    elRect.bottom > bRect.top &&
+    elRect.top < bRect.bottom
+  );
+
+  let name = currentDrag.id;
+  if(inBottle){
+    currentDrag.style.display = 'none';
+    if(name == 'cap-item'){
+      capOnBottle.style.display = 'block';
+      hasCap = true;
+    }else{
+      contents.push(name);
+      liquid.style.height = '100px';
+    }
+  }
+
+  if(contents.length > 0 && hasCap){
+    startBtn.style.display = 'block';
+  }
+
+  currentDrag.style.zIndex = 1;
+  currentDrag = null;
+}
+
+startBtn.addEventListener('click', () => {
+  startBtn.style.display = 'none';
+  result.style.display = 'block';
+
+  let hasVinegar = contents.includes('vinegar');
+  let hasSoda = contents.includes('soda');
+
+  if(hasVinegar && hasSoda){
+    result.textContent = '成功！产生大量气体，瓶塞被顶飞啦！';
+    capOnBottle.classList.add('fly');
+    liquid.style.height = '180px';
+  }else{
+    result.textContent = '没有产生足够气体，瓶塞没有被顶出。';
+  }
+});
+</script>
+
+</body></html>
+  </body>
+</html>
