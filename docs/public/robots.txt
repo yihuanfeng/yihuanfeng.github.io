@@ -1,0 +1,18 @@
+# https://robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://yihuanfeng.github.io/sitemap.xml
+
+# 禁止爬取不必要的路径
+Disallow: /.*\.json$
+Disallow: /_/
+Disallow: /api/
+
+# 允许搜索引擎抓取主要页面
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
