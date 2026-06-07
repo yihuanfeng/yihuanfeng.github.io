@@ -1,6 +1,11 @@
 node_modules/
 .vitepress/dist/
 .vitepress/cache/
+
+
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
 .DS_Store
 
 CLAUDE.md
@@ -8,7 +13,5 @@ CLAUDE.md
 .trae
 .claude
 .superpowers
-
-docs/.vitepress
 
 

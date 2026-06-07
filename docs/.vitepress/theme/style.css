@@ -1,0 +1,548 @@
+/* ========================================
+   Yihuan's Lab - Claymorphism Design
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #4F46E5;
+  --primary-light: #818CF8;
+  --primary-dark: #3730A3;
+  --cta: #F97316;
+  --cta-light: #FB923C;
+  --cta-dark: #EA580C;
+  --bg-main: #EEF2FF;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #E0E7FF;
+  --text-primary: #1E1B4B;
+  --text-secondary: #4338CA;
+  --text-muted: #6B7280;
+  --shadow-soft: 8px 8px 16px rgba(166, 180, 200, 0.5);
+  --shadow-pressed: inset 4px 4px 8px rgba(166, 180, 200, 0.4);
+  --shadow-float: 0 20px 40px rgba(79, 70, 229, 0.15);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 40px;
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+}
+
+* {
+  font-family: 'Baloo 2', cursive, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body {
+  background: var(--bg-main) !important;
+  color: var(--text-primary) !important;
+  line-height: 1.6;
+}
+
+/* Navigation */
+.VPNav {
+  background: var(--bg-card) !important;
+  border-bottom: 2px solid var(--bg-elevated) !important;
+  height: 64px !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100 !important;
+}
+
+.VPNavBar {
+  background: transparent !important;
+  height: 64px !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  padding: 0 24px !important;
+}
+
+.VPNavBarTitle {
+  height: 64px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.VPNavBarTitle .title {
+  font-family: 'Baloo 2', cursive !important;
+  font-weight: 800;
+  font-size: 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--cta) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.VPNavBarMenu {
+  display: flex !important;
+  gap: 6px !important;
+  height: 64px !important;
+  align-items: center !important;
+}
+
+.VPNavBarMenuLink {
+  font-family: 'Baloo 2', cursive !important;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-muted) !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  transition: all var(--transition-normal);
+  background: transparent !important;
+  text-decoration: none !important;
+}
+
+.VPNavBarMenuLink:hover {
+  background: var(--bg-elevated) !important;
+  color: var(--primary) !important;
+}
+
+.VPNavBarMenuLink.active {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+.VPNavBarAppearance,
+.VPNavBarSocialLinks {
+  display: none !important;
+}
+
+.VPNavBarHamburger,
+.VPLocalNav {
+  display: none !important;
+}
+
+/* Hero Section */
+.VPHero {
+  padding: 80px 24px 40px !important;
+  background: linear-gradient(180deg, var(--bg-main) 0%, var(--bg-elevated) 100%) !important;
+  min-height: auto !important;
+  max-height: 85vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.VPHero .container {
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+}
+
+.VPHero .name {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 56px !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--cta) 50%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none !important;
+  letter-spacing: -1px;
+  margin: 0 0 8px 0 !important;
+  line-height: 1.2 !important;
+}
+
+.VPHero .text {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 22px !important;
+  font-weight: 600;
+  color: var(--text-secondary) !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.VPHero .tagline {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 16px !important;
+  color: var(--text-muted) !important;
+  max-width: 500px;
+  margin: 0 auto 16px auto !important;
+}
+
+.VPHero .actions {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 8px !important;
+}
+
+.VPHero .actions .VPButton {
+  font-family: 'Baloo 2', cursive !important;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: var(--radius-lg) !important;
+  border: none !important;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-soft);
+}
+
+.VPHero .actions .VPButton.brand {
+  background: linear-gradient(135deg, var(--cta) 0%, var(--cta-dark) 100%) !important;
+  color: white !important;
+}
+
+.VPHero .actions .VPButton.alt {
+  background: white !important;
+  color: var(--primary) !important;
+  border: 3px solid var(--primary) !important;
+}
+
+.VPHero .actions .VPButton:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-float);
+}
+
+/* Features */
+.VPFeatures {
+  padding: 24px 24px !important;
+  background: var(--bg-main) !important;
+}
+
+.VPFeatures .title {
+  font-size: 28px !important;
+  margin-bottom: 24px !important;
+}
+
+.VPFeature {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 20px !important;
+  box-shadow: var(--shadow-soft) !important;
+  border: none !important;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  margin: 0 !important;
+}
+
+.VPFeature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-float) !important;
+}
+
+.VPFeature .icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.VPFeature .title {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary) !important;
+  margin-bottom: 8px;
+}
+
+.VPFeature .details {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 14px;
+  color: var(--text-muted) !important;
+  line-height: 1.5;
+}
+
+/* Category Grid */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin: 32px 0;
+  padding: 0;
+}
+
+.category-card {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: 28px 20px !important;
+  text-align: center;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-soft) !important;
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--cta));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.category-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-float) !important;
+}
+
+.category-card .icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.category-card h3 {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary) !important;
+  margin-bottom: 6px;
+}
+
+.category-card p {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 14px;
+  color: var(--text-muted) !important;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Demo Card */
+.demo-card {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 28px !important;
+  box-shadow: var(--shadow-soft) !important;
+  border: none !important;
+  margin: 20px 0;
+}
+
+.demo-card h3 {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary) !important;
+  margin-bottom: 14px;
+}
+
+.demo-card p {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 16px;
+  color: var(--text-primary) !important;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.demo-card strong {
+  color: var(--cta) !important;
+  font-weight: 700;
+}
+
+/* Quote */
+.VPDoc blockquote,
+blockquote {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%) !important;
+  border: none !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 20px 28px !important;
+  margin: 20px 0;
+}
+
+.VPDoc blockquote p,
+blockquote p {
+  color: white !important;
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 17px !important;
+  margin: 0 !important;
+}
+
+/* Tables */
+.VPDoc table {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-md) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft) !important;
+  border: none !important;
+  width: 100%;
+}
+
+.VPDoc th {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+  color: white !important;
+  font-family: 'Baloo 2', cursive !important;
+  font-weight: 700;
+  padding: 14px 18px !important;
+}
+
+.VPDoc td {
+  padding: 12px 18px !important;
+  border-bottom: 1px solid var(--bg-elevated) !important;
+  font-family: 'Baloo 2', cursive !important;
+  color: var(--text-primary) !important;
+}
+
+/* Sidebar */
+.VPSidebar {
+  background: var(--bg-card) !important;
+  border-right: none !important;
+  padding: 16px !important;
+}
+
+.VPSidebarItem .text {
+  font-family: 'Baloo 2', cursive !important;
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  transition: all var(--transition-fast);
+}
+
+.VPSidebarItem:hover .text {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+/* Footer */
+.VPFooter {
+  background: var(--bg-card) !important;
+  border-top: 2px solid var(--bg-elevated) !important;
+  padding: 32px 24px !important;
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  font-family: 'Baloo 2', cursive !important;
+  color: var(--text-muted) !important;
+  font-size: 14px;
+}
+
+/* Demo iframe */
+.VPDoc .demo-iframe-wrapper,
+.demo-iframe-wrapper {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 24px !important;
+  margin: 24px 0 !important;
+  align-items: stretch !important;
+}
+
+.VPDoc .demo-iframe-wrapper > *,
+.demo-iframe-wrapper > * {
+  flex: 1 !important;
+  min-width: 300px !important;
+}
+
+.VPDoc .demo-iframe-info,
+.demo-iframe-info {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 28px !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.VPDoc .demo-iframe-info h2,
+.demo-iframe-info h2 {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+  margin-bottom: 16px !important;
+}
+
+.VPDoc .demo-iframe-info p,
+.demo-iframe-info p {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 15px !important;
+  color: var(--text-primary) !important;
+  line-height: 1.7 !important;
+  margin-bottom: 12px !important;
+}
+
+.VPDoc .demo-iframe-container,
+.demo-iframe-container {
+  border-radius: var(--radius-xl) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-float) !important;
+  border: 4px solid var(--primary-light) !important;
+  background: var(--bg-card);
+  height: calc(100vh - 180px) !important;
+  min-height: 500px !important;
+  max-height: 750px !important;
+}
+
+.VPDoc .demo-iframe-container iframe,
+.demo-iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Headings */
+.VPHomeContent h2,
+.VPDoc h2 {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary) !important;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.VPHomeContent h3,
+.VPDoc h3 {
+  font-family: 'Baloo 2', cursive !important;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-secondary) !important;
+  margin-top: 28px;
+  margin-bottom: 14px;
+}
+
+/* Content spacing */
+.VPContent,
+.VPDoc {
+  padding-top: 64px !important;
+}
+
+/* Particles */
+#hero-particles {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .VPHero {
+    padding: 80px 20px 40px !important;
+  }
+  
+  .VPHero .name {
+    font-size: 42px !important;
+  }
+  
+  .VPHero .actions {
+    flex-direction: column !important;
+  }
+  
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .VPDoc .demo-iframe-wrapper,
+  .demo-iframe-wrapper {
+    flex-direction: column !important;
+  }
+  
+  .VPDoc .demo-iframe-container,
+  .demo-iframe-container {
+    height: 60vh !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
