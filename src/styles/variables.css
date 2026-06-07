@@ -1,0 +1,51 @@
+:root,
+[data-theme="dark"] {
+  --bg-main: #0a0a1a;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-nav: rgba(15, 12, 41, 0.7);
+  --border-card: rgba(167, 139, 250, 0.12);
+  --border-card-hover: rgba(167, 139, 250, 0.3);
+  --primary: #a78bfa;
+  --primary-dark: #7c3aed;
+  --accent: #fbbf24;
+  --accent-dark: #d97706;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --tag-3d: #60a5fa;
+  --tag-science: #34d399;
+  --tag-creative: #f472b6;
+  --tag-game: #fb923c;
+  --tag-visual: #a78bfa;
+  --radius-card: 16px;
+  --radius-button: 20px;
+  --radius-tag: 8px;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 30px rgba(167, 139, 250, 0.2);
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+}
+
+[data-theme="light"] {
+  --bg-main: #f8f7ff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f3ff;
+  --bg-nav: rgba(248, 247, 255, 0.85);
+  --border-card: rgba(124, 58, 237, 0.1);
+  --border-card-hover: rgba(124, 58, 237, 0.25);
+  --primary: #7c3aed;
+  --primary-dark: #5b21b6;
+  --accent: #f59e0b;
+  --accent-dark: #b45309;
+  --text-primary: #1e1b4b;
+  --text-secondary: #4c1d95;
+  --text-muted: #6b7280;
+  --tag-3d: #2563eb;
+  --tag-science: #059669;
+  --tag-creative: #db2777;
+  --tag-game: #d97706;
+  --tag-visual: #7c3aed;
+  --shadow-card: 0 2px 8px rgba(124, 58, 237, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(124, 58, 237, 0.15);
+}
