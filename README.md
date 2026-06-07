@@ -1,29 +1,24 @@
-# 🎨 创意工坊 - 个人作品展示网站
+# 🧪 星际工坊 — Yihuan's Lab
 
-一个基于 VitePress 构建的个人创意作品展示网站，整合了多个 HTML5 交互作品。
+9岁编程小达人的创意空间，基于 Vite + Vue 3 + Three.js 构建的单页应用。
 
-## ✨ 作品列表
+## ✨ 特性
 
-### 🎮 游戏
-- 2048 经典版
-- 2048 反向版
-- 2048 自选棋盘
-- 2048 道具版
+- **Three.js 星空背景** — 8000 颗彩色星星漂移闪烁 + 装饰行星轨道运动 + 鼠标视差
+- **航行时间线** — 11 个作品按时间排列，点击新标签页体验
+- **亮暗双模式** — 太空站模式（暗色）+ 日光模式（亮色），一键切换
+- **技能星图 + 里程碑** — 成长记录可视化
+- **响应式** — 适配桌面和移动端
 
-### 🪐 3D展示
-- 八大行星（Three.js）
+## 🎮 作品列表
 
-### 🎨 创意交互
-- 声控涂鸦
-- 幻蓝灵球
-- 手势控制图形
-
-### ✨ 视觉效果
-- 电子万花尺
-- 粒子魔法·指尖星河
-
-### 🔬 科学实验
-- 科学小实验-弹出的瓶盖
+| 分类 | 作品 |
+|------|------|
+| 🎮 游戏 | 2048 经典版、反向版、自选棋盘、道具版 |
+| 🪐 3D | 八大行星（Three.js） |
+| 🎨 创意 | 声控涂鸦、幻蓝灵球、手势控制图形 |
+| ✨ 视觉 | 电子万花尺、粒子魔法·指尖星河 |
+| 🔬 科学 | 弹出的瓶盖 |
 
 ## 🚀 本地开发
 
@@ -32,36 +27,22 @@
 npm install
 
 # 启动开发服务器
-npm run docs:dev
+npm run dev
 
 # 构建
-npm run docs:build
+npm run build
 
 # 预览构建结果
-npm run docs:preview
+npm run preview
 ```
 
-## 📦 部署到 GitHub Pages
+## 📦 部署
 
-1. 在 GitHub 创建名为 `my-portfolio` 的仓库
-2. 将代码推送到仓库
-3. 进入仓库 Settings > Pages
-4. Source 选择 "GitHub Actions"
-5. 推送代码到 main 分支会自动触发部署
+推送到 main 分支会自动通过 GitHub Actions 部署到 GitHub Pages。
 
 ## 🛠️ 技术栈
 
-- [VitePress](https://vitepress.dev/) - 静态站点生成器
-- HTML5 / CSS3 / JavaScript
-- Canvas 2D / WebGL / Three.js
-- Web Audio API
-
-## 📝 自定义配置
-
-编辑 `docs/.vitepress/config.mjs` 修改站点配置：
-- 网站标题和描述
-- 导航栏
-- 侧边栏
-- 社交链接
-
-编辑 `docs/.vitepress/theme/style.css` 修改主题样式。
+- [Vite](https://vite.dev/) + [Vue 3](https://vuejs.org/) — 构建工具和框架
+- [Vue Router](https://router.vuejs.org/) — 路由
+- [Three.js](https://threejs.org/) — 3D 星空背景
+- HTML5 / CSS3 / Canvas 2D / WebGL
