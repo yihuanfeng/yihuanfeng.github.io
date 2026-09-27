@@ -1,51 +1,75 @@
 :root,
-[data-theme="dark"] {
-  --bg-main: #0a0a1a;
-  --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-nav: rgba(15, 12, 41, 0.7);
-  --border-card: rgba(167, 139, 250, 0.12);
-  --border-card-hover: rgba(167, 139, 250, 0.3);
-  --primary: #a78bfa;
-  --primary-dark: #7c3aed;
-  --accent: #fbbf24;
-  --accent-dark: #d97706;
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --tag-3d: #60a5fa;
-  --tag-science: #34d399;
-  --tag-creative: #f472b6;
-  --tag-game: #fb923c;
-  --tag-visual: #a78bfa;
-  --radius-card: 16px;
-  --radius-button: 20px;
-  --radius-tag: 8px;
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 8px 30px rgba(167, 139, 250, 0.2);
+[data-theme='dark'] {
+  /* 背景与层级 */
+  --bg-main: #0c1122;
+  --bg-elevated: rgba(255, 255, 255, 0.045);
+  --bg-hover: rgba(255, 255, 255, 0.085);
+  --bg-sunken: rgba(0, 0, 0, 0.22);
+  --border: rgba(163, 182, 216, 0.16);
+  --border-strong: rgba(163, 182, 216, 0.34);
+
+  /* 文字 */
+  --text-primary: #e9edf6;
+  --text-secondary: #a7b1c6;
+  --text-muted: #68738e;
+
+  /* 主题色 — 舒缓的柔紫蓝 */
+  --primary: #8fa8f2;
+  --primary-strong: #5e7fe0;
+  --primary-soft: rgba(143, 168, 242, 0.14);
+  --accent: #e3b26b;
+  --accent-soft: rgba(227, 178, 107, 0.14);
+
+  /* 分类标签色（柔和） */
+  --tag-game: #e99c5b;
+  --tag-3d: #7fb2e8;
+  --tag-creative: #d98bb0;
+  --tag-visual: #9d8cf0;
+  --tag-science: #6fc7a0;
+  --tag-sandbox: #c99a6b;
+
+  /* 形状与阴影 */
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --radius-tag: 10px;
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-card-hover: 0 12px 32px rgba(30, 40, 90, 0.35);
+  --shadow-cta: 0 6px 20px rgba(94, 127, 224, 0.32);
+
+  /* 过渡 */
   --transition-fast: 150ms ease-out;
-  --transition-normal: 250ms ease-out;
+  --transition-normal: 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* 版式 */
+  --container-width: 1080px;
 }
 
-[data-theme="light"] {
-  --bg-main: #f8f7ff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f5f3ff;
-  --bg-nav: rgba(248, 247, 255, 0.85);
-  --border-card: rgba(124, 58, 237, 0.1);
-  --border-card-hover: rgba(124, 58, 237, 0.25);
-  --primary: #7c3aed;
-  --primary-dark: #5b21b6;
-  --accent: #f59e0b;
-  --accent-dark: #b45309;
-  --text-primary: #1e1b4b;
-  --text-secondary: #4c1d95;
-  --text-muted: #6b7280;
-  --tag-3d: #2563eb;
-  --tag-science: #059669;
-  --tag-creative: #db2777;
-  --tag-game: #d97706;
-  --tag-visual: #7c3aed;
-  --shadow-card: 0 2px 8px rgba(124, 58, 237, 0.08);
-  --shadow-card-hover: 0 8px 24px rgba(124, 58, 237, 0.15);
+[data-theme='light'] {
+  --bg-main: #f4f6fb;
+  --bg-elevated: #ffffff;
+  --bg-hover: #eef1f8;
+  --bg-sunken: rgba(30, 42, 80, 0.04);
+  --border: rgba(40, 56, 98, 0.12);
+  --border-strong: rgba(40, 56, 98, 0.28);
+
+  --text-primary: #232f49;
+  --text-secondary: #56617a;
+  --text-muted: #8a93a8;
+
+  --primary: #4d67c9;
+  --primary-strong: #3b52ad;
+  --primary-soft: rgba(77, 103, 201, 0.1);
+  --accent: #a9742f;
+  --accent-soft: rgba(169, 116, 47, 0.1);
+
+  --tag-game: #c07a35;
+  --tag-3d: #3f76b5;
+  --tag-creative: #b3558a;
+  --tag-visual: #6b5bd0;
+  --tag-science: #3d9d77;
+  --tag-sandbox: #9a6b3f;
+
+  --shadow-card: 0 2px 8px rgba(40, 56, 98, 0.06);
+  --shadow-card-hover: 0 14px 34px rgba(40, 56, 98, 0.14);
+  --shadow-cta: 0 6px 18px rgba(77, 103, 201, 0.24);
 }

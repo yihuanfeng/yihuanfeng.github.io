@@ -1,21 +1,21 @@
 <template>
-  <button class="theme-toggle" @click="toggle" :title="isDark ? '切换日光模式' : '切换太空站模式'">
-    {{ isDark ? '🌙' : '☀️' }}
+  <button
+    class="theme-toggle"
+    @click="toggle"
+    :title="isDark ? '切换到亮色模式' : '切换到暗色模式'"
+    :aria-label="isDark ? '切换到亮色模式' : '切换到暗色模式'"
+  >
+    <span class="toggle-track" :class="{ on: !isDark }">
+      <span class="toggle-thumb" :class="{ on: !isDark }">{{ isDark ? '🌙' : '☀️' }}</span>
+    </span>
   </button>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
-const isDark = ref(true)
-
-onMounted(() => {
-  const saved = localStorage.getItem('theme')
-  if (saved) {
-    isDark.value = saved === 'dark'
-    document.documentElement.setAttribute('data-theme', saved)
-  }
-})
+// 初始值直接读 <html> 上的 data-theme（index.html 内联脚本已提前设置，避免闪烁）
+const isDark = ref(document.documentElement.getAttribute('data-theme') !== 'light')
 
 function toggle() {
   isDark.value = !isDark.value
@@ -27,15 +27,38 @@ function toggle() {
 
 <style scoped>
 .theme-toggle {
-  font-size: 18px;
-  padding: 6px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle-track {
+  display: inline-flex;
+  align-items: center;
+  width: 46px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  padding: 2px;
+  transition: background var(--transition-normal);
+}
+
+.toggle-thumb {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  transition: transform var(--transition-normal);
-  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 11px;
+  transition: transform var(--transition-normal);
 }
-.theme-toggle:hover {
-  transform: scale(1.2);
+
+.toggle-thumb.on {
+  transform: translateX(20px);
 }
 </style>

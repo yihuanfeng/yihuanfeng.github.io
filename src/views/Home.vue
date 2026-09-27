@@ -1,30 +1,24 @@
 <template>
-  <main class="home">
+  <main>
     <HeroSection />
-    <Timeline />
+    <ProjectsSection />
     <SkillMap />
     <Milestones />
-    <AboutSection />
-    <footer class="footer">
-      <p>Made with ❤️ and code · © {{ new Date().getFullYear() }} Yihuan 冯意欢</p>
+    <AboutTeaser />
+    <footer class="site-footer">
+      <div class="container">
+        <p>Made with ❤️ and code · © {{ year }} Yihuan 冯意欢</p>
+      </div>
     </footer>
   </main>
 </template>
 
 <script setup>
 import HeroSection from '../components/HeroSection.vue'
-import Timeline from '../components/Timeline.vue'
+import ProjectsSection from '../components/ProjectsSection.vue'
 import SkillMap from '../components/SkillMap.vue'
 import Milestones from '../components/Milestones.vue'
-import AboutSection from '../components/AboutSection.vue'
-</script>
+import AboutTeaser from '../components/AboutTeaser.vue'
 
-<style scoped>
-.footer {
-  text-align: center;
-  padding: 24px 20px;
-  border-top: 1px solid var(--border-card);
-  color: var(--text-muted);
-  font-size: 12px;
-}
-</style>
+const year = new Date().getFullYear()
+</script>

@@ -1,115 +1,184 @@
 <template>
   <main class="about-page">
-    <StarField />
-    <div class="about-content">
-      <h1 class="about-heading">👨‍🚀 关于我</h1>
-      <p class="about-intro">我叫冯意欢，今年9岁，小学三年级。我喜欢用代码创造有趣的东西！</p>
+    <div class="container about-content">
+      <FadeContent :duration="0.7">
+        <p class="about-eyebrow">ABOUT ME</p>
+        <SplitText tag="h1" :text="'关于我'" class="about-heading" text-align="left" :delay="20" :duration="0.9" />
+        <p class="about-intro">
+          你好，我是冯意欢，今年 9 岁，小学三年级。我喜欢用代码创造有趣的东西——游戏、画画、还有科学小实验。
+        </p>
+      </FadeContent>
 
-      <div class="story-section">
-        <h2>🌱 开始</h2>
-        <p>我7岁的时候开始学编程。一开始只是觉得电脑很神奇，能做出各种东西。后来我发现，编程也可以很有趣，不只是敲代码，而是创造！</p>
+      <div class="story">
+        <FadeContent v-for="section in story" :key="section.title" :delay="0.05">
+          <article class="story-card card">
+            <h2 class="story-title">
+              <span class="story-mark" aria-hidden="true">{{ section.mark }}</span>
+              {{ section.title }}
+            </h2>
+            <p class="story-text">{{ section.text }}</p>
+            <ul v-if="section.list" class="story-list">
+              <li v-for="item in section.list" :key="item">
+                <span class="list-dot" aria-hidden="true"></span>
+                {{ item }}
+              </li>
+            </ul>
+          </article>
+        </FadeContent>
       </div>
 
-      <div class="story-section">
-        <h2>🌿 成长</h2>
-        <p>学了两年编程，我做过了很多作品：</p>
-        <ul>
-          <li>🎮 <strong>游戏</strong>：2048 各种版本，还有更多在计划中</li>
-          <li>🪐 <strong>3D</strong>：用 Three.js 做了太阳系，可以看到八大行星</li>
-          <li>🎨 <strong>创意</strong>：声控涂鸦、手势控制、魔法球...</li>
-          <li>✨ <strong>视觉</strong>：粒子效果、万花尺图案...</li>
-          <li>🔬 <strong>科学</strong>：把科学实验变成互动的网页</li>
-        </ul>
-      </div>
+      <FadeContent :delay="0.1">
+        <blockquote class="about-quote card">
+          “代码是我的画笔，浏览器是我的画布。每一个作品都是我想象力的延伸。”
+        </blockquote>
 
-      <div class="story-section">
-        <h2>🌸 未来</h2>
-        <p>我想以后做出更厉害的作品，学习更多编程知识。也许有一天能成为一个真正的程序员！</p>
-      </div>
-
-      <blockquote class="quote">代码是我的画笔，浏览器是我的画布。每一个作品都是我想象力的延伸。</blockquote>
-
-      <router-link to="/" class="back-link">← 返回首页</router-link>
+        <div class="about-actions">
+          <router-link to="/" class="btn btn--ghost">← 返回首页</router-link>
+          <a href="#works" class="btn btn--primary" @click.prevent="goHomeAndScroll">看看作品</a>
+        </div>
+      </FadeContent>
     </div>
   </main>
 </template>
 
 <script setup>
-import StarField from '../components/StarField.vue'
+import { useRouter } from 'vue-router'
+import SplitText from '../components/effects/SplitText.vue'
+import FadeContent from '../components/effects/FadeContent.vue'
+
+const router = useRouter()
+
+const story = [
+  {
+    mark: '🌱',
+    title: '开始',
+    text: '我 7 岁的时候开始学编程。一开始只是觉得电脑很神奇，能做出各种东西。后来我发现，编程不只是敲代码，而是创造——把脑子里的想法变成真的能玩、能看的东西。'
+  },
+  {
+    mark: '🌿',
+    title: '成长',
+    text: '学了两年编程，我做了不少作品：',
+    list: [
+      '游戏：2048 的经典版、反向版、自选棋盘版、道具版',
+      '3D：用 Three.js 做的太阳系，能看到八大行星、月球和冥王星',
+      '创意：声控涂鸦、声控魔法球、手势控制图形',
+      '视觉：五角星烟花画板、电子万花尺',
+      '科学：把瓶盖实验做成了互动网页'
+    ]
+  },
+  {
+    mark: '🌸',
+    title: '未来',
+    text: '我想继续做出更厉害的作品，学习更多编程知识。也许有一天，我能成为一个真正的程序员。'
+  }
+]
+
+function goHomeAndScroll() {
+  router.push('/').then(() => {
+    document.getElementById('works')?.scrollIntoView({ behavior: 'smooth' })
+  })
+}
 </script>
 
 <style scoped>
 .about-page {
-  position: relative;
   min-height: 100vh;
-  padding-top: 56px;
+  padding: 116px 0 80px;
 }
+
 .about-content {
-  position: relative;
-  z-index: 1;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  max-width: 720px;
 }
+
+.about-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--primary);
+  margin-bottom: 14px;
+}
+
 .about-heading {
-  font-family: 'Baloo 2', cursive;
-  font-size: 32px;
+  font-size: clamp(32px, 6vw, 44px);
   font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
+
 .about-intro {
   font-size: 16px;
   color: var(--text-secondary);
   line-height: 1.8;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
-.story-section {
-  margin-bottom: 28px;
+
+.story {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
 }
-.story-section h2 {
-  font-family: 'Baloo 2', cursive;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
+
+.story-card {
+  padding: 22px 24px;
+}
+
+.story-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
   margin-bottom: 10px;
 }
-.story-section p {
+
+.story-mark {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.story-text {
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.8;
 }
-.story-section ul {
+
+.story-list {
   list-style: none;
-  padding: 0;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.story-section li {
+
+.story-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 2;
+  line-height: 1.7;
 }
-.story-section strong {
-  color: var(--accent);
+
+.list-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 9px;
+  flex-shrink: 0;
 }
-.quote {
-  margin: 32px 0;
-  padding: 18px 24px;
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  border-radius: var(--radius-card);
-  color: white;
-  font-family: 'Baloo 2', cursive;
+
+.about-quote {
+  padding: 20px 24px;
   font-size: 15px;
-  border: none;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--primary);
+  font-style: italic;
+  margin-bottom: 32px;
 }
-.back-link {
-  display: inline-block;
-  margin-top: 24px;
-  color: var(--primary);
-  font-weight: 600;
-  font-size: 14px;
-  transition: color var(--transition-normal);
-}
-.back-link:hover {
-  color: var(--accent);
+
+.about-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 </style>
