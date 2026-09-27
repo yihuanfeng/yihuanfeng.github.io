@@ -7,15 +7,34 @@
       </router-link>
 
       <div class="navbar-links">
-        <router-link
-          v-for="link in links"
-          :key="link.to"
-          :to="link.to"
-          class="nav-link"
-          :class="{ active: isActive(link.to) }"
-        >
-          {{ link.label }}
-        </router-link>
+        <template v-for="link in links" :key="link.label">
+          <router-link
+            v-if="link.to"
+            :to="link.to"
+            class="nav-link"
+            :class="{ active: isActive(link.to) }"
+          >
+            {{ link.label }}
+          </router-link>
+          <button
+            v-else-if="link.type === 'works'"
+            type="button"
+            class="nav-link"
+            :class="{ active: isActive('/') && route.hash === '#works' }"
+            @click="goWorks"
+          >
+            {{ link.label }}
+          </button>
+          <a
+            v-else-if="link.external"
+            :href="link.external"
+            target="_blank"
+            rel="noopener"
+            class="nav-link"
+          >
+            {{ link.label }}
+          </a>
+        </template>
       </div>
 
       <div class="navbar-actions">
@@ -38,18 +57,33 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const links = [
-  { to: '/', label: '首页' },
-  { to: '/about', label: '关于' }
+  { label: '首页', to: '/' },
+  { label: '作品', type: 'works' },
+  { label: '关于', to: '/about' },
+  {
+    label: '沙盒',
+    external: 'https://yihuanfeng.github.io/voxelcraft-web/game.html'
+  }
 ]
 
 function isActive(path) {
   return route.path === path
+}
+
+// 作品：首页直接滚动到作品区；在其他页先切回首页，再由 Home 落地滚动
+function goWorks() {
+  if (route.path === '/') {
+    document.getElementById('works')?.scrollIntoView({ behavior: 'smooth' })
+  } else {
+    router.push({ path: '/', hash: '#works' })
+  }
 }
 </script>
 
